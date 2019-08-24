@@ -1,1 +1,1 @@
-# MyMessenger
+MyMessenger is simple social nextworking app which is very quite similar to Facebook. My initial thought was to use this project to get better understanding of Django. The whole project is written in Python with Django.
