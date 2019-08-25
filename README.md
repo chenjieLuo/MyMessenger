@@ -1,1 +1,1 @@
-MyMessenger is simple social nextworking web app which is quite similar to Twitter. My initial thought was to use this project to get better understanding of Django. The whole project is written in Python with Django.
+MyMessenger is simple social nextworking web app which is quite similar to Twitter. All friends' messages will be visible and you add other friends through search.  My initial thought was to use this project to get better understanding of Django. The whole project is written in Python with Django.
