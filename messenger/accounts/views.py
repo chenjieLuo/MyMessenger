@@ -129,7 +129,10 @@ class PostView(TemplateView):
 
     def get(self, request):
         form = self.form_post(None)
-        posts = Post.objects.all().order_by('-created')
+        friend, created = Friend.objects.get_or_create(current_user=request.user)
+        friends = friend.users.all()
+        posts = Post.objects.filter(Q(user__in=friends) | Q(user=request.user))
+
         users = User.objects.exclude(id=request.user.id)
 
         return render(request, self.template_name, {'form': form, 'posts': posts, 'users': users})
