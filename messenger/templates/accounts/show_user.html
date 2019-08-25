@@ -5,6 +5,9 @@
     {% for user in users %}
         {% if not user in friends and user.username != 'admin' %}
             <h3>{{ user.username }}</h3>
+            <a href="{% url 'accounts:change_friends' operation='add' id=user.id %}">
+                <button type="button" class="btn btn-success">Add This Friend</button>
+            </a>
         {% endif %}
     {% endfor %}
 {% else %}

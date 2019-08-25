@@ -2,26 +2,26 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.views.generic import View
-from .forms import UserForm, LoginForm
+from .forms import UserForm, LoginForm, PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
-from .models import Friend
+from .models import Friend, Post
 
 
 def home(request):
     return render(request, 'accounts/loggedin.html')
 
 
-#def my_friends(request):
+# def my_friends(request):
 #    return render(request, 'accounts/my_friends.html')
 
 
-def my_messages(request):
-    return render(request, 'accounts/post.html')
+# def my_messages(request):
+#    return render(request, 'accounts/post.html', {'form': form, ''})
 
 
 def show_user(request):
@@ -72,7 +72,8 @@ def change_friends(request, operation, id):
     if operation == 'add':
         Friend.make_friend(request.user, friend)
     elif operation == 'remove':
-        Friend.break_friend(request, friend)
+        Friend.break_friend(request.user, friend)
+    return render(request, 'accounts/loggedin.html')
 
 
 class UserFormView(View):
@@ -120,3 +121,25 @@ class UserFormView(View):
                     return render(request, self.login_template, {'form': form})
 
         return render(request, self.template_name, {'form': form})
+
+
+class PostView(TemplateView):
+    form_post = PostForm
+    template_name = 'accounts/post.html'
+
+    def get(self, request):
+        form = self.form_post(None)
+        posts = Post.objects.all().order_by('-created')
+        users = User.objects.exclude(id=request.user.id)
+
+        return render(request, self.template_name, {'form': form, 'posts': posts, 'users': users})
+
+    def post(self, request):
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+
+            return redirect('accounts:my_messages')
+        redirect('accounts:my_messages')
